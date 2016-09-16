@@ -1,2 +1,2 @@
 # Sample-Code
-Sample code
+Samples of Ruby on Rails code taken from my work.
