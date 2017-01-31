@@ -1,0 +1,13 @@
+#comments.span-23.comments.round.append-bottom.last.ajax-form
+	= render :partial => "comments/new", :locals => {:commentable => commentable}
+	= render :partial => "ajax_spinner"
+	- @commentable = commentable
+	- @comments = commentable.comments.paginate(:page => params[:comment_page], :per_page => 5)
+	#comments
+		- unless @comments.empty?
+			- @comments.each do |comment|
+				= render :partial => "comments/row", :locals => {:comment => comment, :commentable => commentable}
+			.span-22.append-1.paginate.last
+				%span.right
+					= page_entries_info @comments
+					= will_paginate @comments, :param_name => :comment_page, :renderer => AjaxLinkRenderer
