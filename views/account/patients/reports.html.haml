@@ -1,0 +1,37 @@
+
+= render :partial => "nametag", :locals => { :patient => @patient }
+				
+.span-24
+	= render :partial => 'subnav'
+
+.span-23.round.box.last
+	- unless @prov_reminders.nil? and @flowsheets.nil?
+		.span-11.round{:style => "border: 2px #7AC5CD solid; padding: 0.5em;"}
+			.append-bottom
+				%h1 Sent to the Provider
+			- unless @prov_reminders.nil?
+				= render :partial => "reports", :locals => {:reports => @prov_reminders, :name => "Overdue Test Reminders", :param => "prov_reminders"}
+			- unless @flowsheets.nil?
+				= render :partial => "reports", :locals => {:reports => @flowsheets, :name => "Flowsheets", :param => "flowsheets"}
+	- unless @pat_reminders.nil? and @pat_alerts.nil?
+		- if @prov_reminders.nil? and @flowsheets.nil?
+			.span-11.round{:style => "border: 2px #7AC5CD solid; padding: 0.5em;"}
+				.append-bottom
+					%h1 Sent to the Patient
+				- unless @pat_reminders.nil?
+					= render :partial => "reports", :locals => {:reports => @pat_reminders, :name => "Overdue Test Reminders", :param => "pat_reminders"}
+				- unless @pat_alerts.nil?
+					= render :partial => "reports", :locals => {:reports => @pat_alerts, :name => "High Test Result Alerts", :param => "pat_alerts"}
+		- else
+			.span-11.round.right.last{:style => "border: 2px #7AC5CD solid; padding: 0.5em;"}
+				.append-bottom
+					%h1 Sent to the Patient
+				- unless @pat_reminders.nil?
+					= render :partial => "reports", :locals => {:reports => @pat_reminders, :name => "Overdue Test Reminders", :param => "pat_reminders"}
+				- unless @pat_alerts.nil?
+					= render :partial => "reports", :locals => {:reports => @pat_alerts, :name => "High Test Result Alerts", :param => "pat_alerts"}
+
+.span-23.box.round.comment-box.last
+	%h1.no-margin
+		Comments for #{@patient.first_name.titlecase} #{@patient.last_name.titlecase}
+	= render :partial => 'comments/list', :locals => {:commentable => @patient}

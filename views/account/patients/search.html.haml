@@ -1,0 +1,13 @@
+%h1 Patient Search Results
+- if @patients.present?
+	.span-24.last
+		= page_entries_info @patients
+	.span-14
+		= will_paginate @patients unless @patients.nil?
+	= render :partial => "list"
+- else
+	%table
+		%tr
+			%td No patients found
+.span-10.last
+	= will_paginate @patients unless @patients.nil?

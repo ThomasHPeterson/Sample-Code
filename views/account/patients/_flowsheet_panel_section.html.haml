@@ -1,0 +1,55 @@
+.span-23.last.append-bottom
+	.span-16
+		%label{:for => id}
+			= title
+			%span.quiet.right= range_info
+		%table.flowsheet{:id => id}
+			%thead
+				%tr
+					%th Result Date
+					- columns.each do |k, v|
+						%th
+							- if help.present? and help[k].present?
+								%a.tooltip{:help => help[k]}= k
+							- else
+								= k
+			%tbody
+				- if columns.size > 1
+					- if tests.size > 0
+						- tests.each_key do |date|
+							%tr
+								%td= date
+								- columns.each_value do |test|
+									- if tests[date][test]
+										- i = 1
+										%td
+											= tests[date][test][0].result
+											- while tests[date][test][i]
+												%br/
+												= tests[date][test][i].result
+												- i += 1
+									- else
+										%td -
+					- else
+						%tr
+							%td No results found
+				- elsif columns.size == 1
+					- if tests.size > 0
+						- tests.each_with_index do |test|
+							%tr
+								%td= test.result_date.to_date
+								%td= test.result
+					- else
+						%tr
+							%td No results found
+				- else
+					%tr
+						%td No results found
+	.span-7.last.prepend-top
+		%table.flowsheet
+			%thead
+				%tr
+					%th Clinical Considerations
+			%tbody
+				%tr
+					%td= text
