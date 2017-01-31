@@ -1,8 +1,0 @@
-.span-23.last
-	= page_entries_info @reports
-.span-11
-	= will_paginate @reports
-.span-12.right.last
-	%ul#tablenav.tabmenu.right
-		%li{:class => "<!--[if IE]>curvyIgnore<![endif]--> #{"active" if params[:action] == "daily" }"}
-			= link_to "Daily Reports", daily_account_reports_path
