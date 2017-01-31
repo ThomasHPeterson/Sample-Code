@@ -1,0 +1,71 @@
+= form_for :comment, :url => comments_path(commentable.class.to_s.underscore, commentable.id), remote: true do |f|
+	#comment_form.span-23.comment-row.last
+		.span-8.prepend-top
+			%p.comment-username.strong.center_text= current_user.email
+		.span-14.comment-content.leftarrow.last{:class => "<!--[if IE]>curvyIgnore<![endif]-->"}
+			- if flash[:new_comment_errors]
+				.span-14.comment-alert.last
+					%h4.comment-alert-title
+						= pluralize(flash[:new_comment_errors].count, "error")
+						prohibited this comment from being posted:
+					%ul
+						- flash[:new_comment_errors].each do |msg|
+							%li.comment-alert-list= msg
+			- if @comment_option_lookups
+				- col_len = @comment_option_lookups.length
+				.span-14.last
+					%table
+						- i = 0
+						- j = (col_len / 2) + (col_len % 2)
+						- until (col_len % 2 == 0 and j >= col_len) or (col_len % 2 == 1 and j > col_len)
+							%tr{:style => 'font-size:90%'}
+								%td
+									= check_box_tag 'options[]', @comment_option_lookups[i].id
+									= @comment_option_lookups[i].comment_option
+									- if @comment_option_lookups[i].comment_option == 'Member terminated'
+										&nbsp;
+										= datepicker '', :member_terminated_date, 'size' => 8, 'placeholder' => 'date', :dateFormat => 'mm-dd-yy'
+									- elsif @comment_option_lookups[i].comment_option == 'Member deceased'
+										&nbsp;
+										= datepicker '', :member_deceased_date, 'size' => 8, 'placeholder' => 'date', :dateFormat => 'mm-dd-yy'
+								- if j < col_len
+									%td
+										= check_box_tag 'options[]', @comment_option_lookups[j].id
+										= @comment_option_lookups[j].comment_option
+										- if @comment_option_lookups[j].comment_option == 'Member terminated'
+											&nbsp;
+											= datepicker '', :member_terminated_date, 'size' => 8, 'placeholder' => 'date', :dateFormat => 'mm-dd-yy'
+										- elsif @comment_option_lookups[j].comment_option == 'Member deceased'
+											&nbsp;
+											= datepicker '', :member_deceased_date, 'size' => 8, 'placeholder' => 'date', :dateFormat => 'mm-dd-yy'
+								- else
+									%td &nbsp;
+							- i = i + 1
+							- j = j + 1
+			.span-14.last
+				= f.text_area :comment, :id => "comment-textarea", :class => "comment-textarea span-14", :maxlength => 1000, :placeholder => 'Add optional written comment.'
+			.span-14.comments-heading.last
+				%span.right
+					= f.submit "Post Comment", :disable_with => "Saving...", :onclick => "return checkCommentEditing()"
+
+- content_for :javascript_includes do
+	:javascript
+
+		function checkCommentEditing() {
+			if (document.getElementsByClassName("comment-textarea span-14").length > 1) {
+				alert("Please update the comment you are editing before creating another");
+				return false;
+			} else {
+				bSelected = false;
+				boxes = document.getElementsByName('options[]');
+				for (i = 0; !bSelected && i < boxes.length; ++i) {
+					bSelected = boxes[i].checked
+				}
+				if (!bSelected && document.getElementsByClassName('comment-textarea span-14')[0].value == '') {
+					alert("Please choose at least one option or add a written comment.");
+					return false;
+				} else {
+					return true;
+				}
+			}
+		}

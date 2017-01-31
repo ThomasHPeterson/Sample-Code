@@ -1,61 +1,13 @@
-%table
-	%thead
-		%tr
-			%th Patient Name
-			%th Date of Birth
-			%th Primary Provider
-			%th Practice
-			%th Sex
-			- if params[:action] == 'active'
-				%th Active DM?
-				%th Active CKD?
-			- if params[:action] == 'inactive'
-				%th Reason Inactive
-				%th Comment
-	%tbody
-		- @patients.each do |patient|
-			%tr
-				- if can? :read, patient
-					%td.link= link_to "#{patient.last_name}, #{patient.first_name} #{patient.middle_name}", flowsheet_account_patient_path(obfuscate_encrypt(patient.patient_id, session))
-				- else
-					%td= "#{patient.last_name}, #{patient.first_name} #{patient.middle_name}"
-				%td= patient.dob.to_date.strftime('%m-%d-%Y')
-				- if patient.contact.nil?
-					%td No Provider
-					%td
-				- else
-					- if can? :read, patient.contact
-						%td.link= link_to "#{patient.contact.last_name}, #{patient.contact.first_name}", patient.contact
-						%td= patient.contact.clients.first.client_name
-					- else
-						%td= "#{patient.contact.last_name}, #{patient.contact.first_name}"
-						%td= patient.contact.clients.first.client_name
-				%td= patient.sex
-				- if params[:action] == 'active'
-					%td= list_display_report_status patient.dm_reporting_status
-					%td= list_display_report_status patient.ckd_reporting_status
-				- if params[:action] == 'inactive'
-					%td
-						- if @is_dm_account
-							- if patient.dm_extended_lookup.non_outreach_short_name.present?
-								= "DM Status: #{patient.dm_extended_lookup.non_outreach_short_name}"
-								- if patient.dm_extended_lookup.help.present?
-									.tooltip{:class => 'ui-icon ui-icon-info', :style => 'display:inline-block', :help => patient.dm_extended_lookup.help }
-							- else
-								= "DM Status: #{patient.status_lookup.patient_status}"
-						- if @is_dm_account and @is_ckd_account
-							%br
-						- if @is_ckd_account
-							- if patient.ckd_extended_lookup.non_outreach_short_name.present?
-								= "CKD Status: #{patient.ckd_extended_lookup.non_outreach_short_name}"
-								- if patient.ckd_extended_lookup.help.present?
-									.tooltip{:class => 'ui-icon ui-icon-info', :style => 'display:inline-block', :help => patient.ckd_extended_lookup.help }
-							- else
-								= "CKD Status: #{patient.patient_particip_status_lookup.patient_particip_status}"
-					%td
-						- if @is_dm_account and !patient.status_comment.nil?
-							= patient.status_comment
-						- if @is_dm_account and !patient.status_comment.nil? and @is_ckd_account and !patient.ckd_particip_status_comment.nil?
-							%br
-						- if @is_ckd_account and !patient.ckd_particip_status_comment.nil?
-							= patient.ckd_particip_status_comment
+#comments.span-23.comments.round.append-bottom.last.ajax-form
+	= render :partial => "comments/new", :locals => {:commentable => commentable}
+	= render :partial => "ajax_spinner"
+	- @commentable = commentable
+	- @comments = commentable.comments.paginate(:page => params[:comment_page], :per_page => 5)
+	#comments
+		- unless @comments.empty?
+			- @comments.each do |comment|
+				= render :partial => "comments/row", :locals => {:comment => comment, :commentable => commentable}
+			.span-22.append-1.paginate.last
+				%span.right
+					= page_entries_info @comments
+					= will_paginate @comments, :param_name => :comment_page, :renderer => AjaxLinkRenderer

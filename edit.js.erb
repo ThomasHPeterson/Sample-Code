@@ -1,0 +1,9 @@
+if (document.getElementsByClassName("comment-textarea span-14").length > 1 && <%= flash[:edit_comment_errors].nil? %>) {
+    alert("Please update the comment you are editing before editing another");
+} else if (<%= !flash[:edit_comment_errors].nil? %>) {
+    alert("Please choose at least one option or add a written comment.");
+} else {
+    $('.edit_comment_' + <%= @comment.id %>).unbind('ajax:success').bind('ajax:success', function() {
+        $(this).closest('div.comment-row').html("<%= escape_javascript(render :partial => "comments/edit") %>");
+    });
+}
