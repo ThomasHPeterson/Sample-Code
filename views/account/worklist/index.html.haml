@@ -1,0 +1,5 @@
+= render :partial => "overview_bar"
+.span-24.last
+	- if @columns.present?
+		.span-24
+			= render :partial => "account/worklist/ckd_worklist", :locals => { :worklist_lower_range_selector => @worklist_lower_range, :worklist_upper_range_selector => @worklist_upper_range, :upcoming => @upcoming }
