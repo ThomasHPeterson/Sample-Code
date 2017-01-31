@@ -1,0 +1,52 @@
+.span-23.last
+	%h1= "Listing Daily Reports for #{@date.strftime("%A %B %d, %Y")}"
+.span-23.last
+	= render :partial => "daily_reports_search"
+	= render :partial => "nav"
+- if @reports.empty?
+	.span-24.last
+		%table#reports
+			%thead
+				%tr
+					%th No reports found
+- else
+	= form_for :reports, :url => view_selected_reports_path, :html => {:method => :get, :target => '_blank', :id => "select_form"} do
+		.span-24.last
+			%table#reports
+				%thead
+					%tr
+						%th= check_box_tag 'check_all', "check_all", false
+						%th Date
+						%th Patient
+						%th Provider
+						%th Report type
+						%th
+						%th
+				%tbody
+					- @reports.each do |report|
+						%tr
+							%td.checkbox= check_box_tag "report_ids[]", report.id
+							- if report.create_time.nil?
+								%td UNKNOWN
+							- else
+								%td= report.create_time.strftime('%m-%d-%Y')
+							- if can? :show, report.patient
+								%td= link_to report.patient.name, flowsheet_account_patient_path(obfuscate_encrypt(report.patient.patient_id, session))
+							- else
+								%td= report.patient.name
+							- if can? :show, report.contact
+								%td= report.contact.name
+							- else
+								%td= report.contact.name
+							%td= report.type
+							%td= link_to 'View PDF', view_report_path(obfuscate_encrypt(report.report_id, session)), {:target => "_blank"}
+							%td= link_to 'Download PDF', download_report_path(obfuscate_encrypt(report.report_id, session))
+		.span-24.last
+			= submit_tag "View All Selected", :name => "_select_button"
+			= submit_tag "Download All Selected", :name => "_select_button"
+
+	.paginate
+		= will_paginate
+
+= content_for :javascript_includes do
+	= javascript_include_tag 'checkall'

@@ -1,0 +1,13 @@
+.right{:style => "padding-right: 1.5em;"}
+	= form_for :search, :url => daily_account_reports_path, :html => {:method => :get} do |f|
+		= f.fields_for :include_reports do |check|
+			= check.check_box "PatientAlert", :checked => (@reports_checked["PatientAlert"].nil? or @reports_checked["PatientAlert"] == '1') ? true : false
+			= check.label "PatientAlert", "Patient Alerts"
+			= check.check_box "PatientReminder", :checked => (@reports_checked["PatientReminder"].nil? or @reports_checked["PatientReminder"] == '1') ? true : false
+			= check.label "PatientReminder", "Patient Reminders"
+			= check.check_box "FlowSheet", :checked => @reports_checked["FlowSheet"] == '1' ? true : false
+			= check.label "FlowSheet", "Flowsheets"
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		= f.datepicker :on_date, :placeholder => @date.strftime("%A %B %d, %Y"), :defaultDate => @date.strftime("%A %B %d, %Y"), :dateFormat => "DD MM d, yy"
+		= hidden_field_tag :last_selected_date, @date
+		= f.submit 'Search'
