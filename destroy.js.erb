@@ -1,5 +1,0 @@
-$('.delete_comment').bind('ajax:success', function() {
-	$(this).closest('div.comment-row').fadeOut();
-});
-$('#comments').replaceWith("<%= escape_javascript(render :partial => "comments/list", :locals => {:commentable => @commentable}) %>");
-$('.comment-textarea').val('');
