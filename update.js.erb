@@ -1,3 +1,0 @@
-$('.edit_comment').bind('ajax:success', function() {
-	$(this).closest('div.comment-row').replaceWith("<%= escape_javascript(render :partial => "comments/row", :locals => {:comment => @comment}) %>");
-});
