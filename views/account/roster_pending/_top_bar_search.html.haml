@@ -1,0 +1,8 @@
+%section.span-9.prepend-top.round.search{:style => "padding: 0.75em;"}
+	= form_for :search, :url => '/account/roster_pending/search', :method => "get", :html => {:onsubmit => 'return prompt_before_search_submit()'} do |f|
+		.span-9.last
+			%label{:style => "width: 100px;"} Search for Patient:
+		.span-9.last
+			= f.text_field :last_name_starts_with, :placeholder => "Last Name", :style => "width: 135px;"
+			= f.text_field :first_name_starts_with, :placeholder => "First Name", :style => "width: 135px;"
+			= f.submit 'Search'
