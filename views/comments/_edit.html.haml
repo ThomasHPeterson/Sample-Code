@@ -1,0 +1,52 @@
+#comment_form.span-23.comment-row.last
+	= form_for @comment, :remote => true do |f|
+		.span-8.prepend-top
+			%p.comment-username.strong.center_text= current_user.email
+		.span-14.comment-content.leftarrow.last{:class => "<!--[if IE]>curvyIgnore<![endif]-->"}
+			- if flash[:edit_comment_errors]
+				.span-14.comment-alert.last
+					%h4.comment-alert-title
+						= pluralize(flash[:edit_comment_errors].count, "error")
+						prohibited this comment from being posted:
+					%ul
+						- flash[:edit_comment_errors].each do |msg|
+							%li.comment-alert-list= msg
+			.span-11.comments-heading.last
+				%strong= "Editing Comment from #{time_ago_in_words(@comment.created_at)} ago"
+			- if @comment_option_lookups
+				- col_len = @comment_option_lookups.length
+				.span-14.last
+					%table
+						- i = 0
+						- j = (col_len / 2) + (col_len % 2)
+						- until (col_len % 2 == 0 and j >= col_len) or (col_len % 2 == 1 and j > col_len)
+							%tr{:style => 'font-size:90%'}
+								%td
+									= check_box_tag 'options[]', @comment_option_lookups[i].id, (@option_ids.include? @comment_option_lookups[i].id.to_i)
+									= @comment_option_lookups[i].comment_option
+									- if @comment_option_lookups[i].comment_option == 'Member terminated'
+										&nbsp;
+										= datepicker '', :member_terminated_date_edit, 'size' => 8, 'placeholder' => 'date', 'value' => @terminated_date, :dateFormat => 'mm-dd-yy'
+									- elsif @comment_option_lookups[i].comment_option == 'Member deceased'
+										&nbsp;
+										= datepicker '', :member_deceased_date_edit, 'size' => 8, 'placeholder' => 'date', 'value' => @deceased_date, :dateFormat => 'mm-dd-yy'
+								- if j < col_len
+									%td
+										= check_box_tag 'options[]', @comment_option_lookups[j].id, (@option_ids.include? @comment_option_lookups[j].id.to_i)
+										= @comment_option_lookups[j].comment_option
+										- if @comment_option_lookups[j].comment_option == 'Member terminated'
+											&nbsp;
+											= datepicker '', :member_terminated_date_edit, 'size' => 8, 'placeholder' => 'date', 'value' => @terminated_date, :dateFormat => 'mm-dd-yy'
+										- elsif @comment_option_lookups[j].comment_option == 'Member deceased'
+											&nbsp;
+											= datepicker '', :member_deceased_date_edit, 'size' => 8, 'placeholder' => 'date', 'value' => @deceased_date, :dateFormat => 'mm-dd-yy'
+								- else
+									%td &nbsp;
+							- i = i + 1
+							- j = j + 1
+			.span-14.last
+				= f.text_area :comment, :id => "comment-textarea", :class => "comment-textarea span-14", :maxlength => 1000, :value => @comment.comment, :placeholder => 'Add optional written comment.'
+			.span-14.comments-heading.last
+				%span.right
+					= f.submit "Update", :disable_with => "Updating..."
+					= f.submit "Cancel"

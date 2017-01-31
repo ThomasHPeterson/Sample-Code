@@ -1,0 +1,24 @@
+.span-23.comment-row.last
+	.span-8.prepend-top
+		%p.comment-username.strong.center_text= comment.user.email
+	.span-14.comment-content.leftarrow.last{:class => "<!--[if IE]>curvyIgnore<![endif]-->"}
+		.span-11.comments-heading.last
+			%strong
+				= "#{time_ago_in_words(comment.created_at)} ago"
+			- unless comment.created_at == comment.updated_at
+				%span.quiet
+					last edited #{time_ago_in_words(comment.updated_at)} ago
+		.span-3.comments-heading.last
+			- if comment.user == current_user
+				%strong.strong.right
+					= link_to "Edit", edit_patient_comment_path(obfuscate_encrypt(comment.commentable.patient_id, session), obfuscate_encrypt(comment.id, session)), :remote => true, :class => "edit_comment_#{comment.id}"
+					| #{link_to "Delete", "/patient/#{obfuscate_encrypt(comment.commentable.patient_id, session)}/comments/#{obfuscate_encrypt(comment.id, session)}",:confirm => "Are you sure you want to delete this comment?", :method => :delete, :remote => true, :class => 'delete_comment'}
+		.span-14.last
+			- if comment.comment_options.size > 0
+				- comment.comment_options.each do |co|
+					= "* #{co.comment_option_lookup.comment_option}  #{co.notes unless co.notes.nil?}"
+					%br
+				- if comment.comment.length > 0
+					= '--------'
+					%br
+			= comment.comment
