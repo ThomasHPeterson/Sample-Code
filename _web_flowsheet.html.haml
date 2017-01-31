@@ -1,0 +1,3 @@
+.span-23.round.box.flowsheet.last
+	- @sections.each do |k, section|
+		= render :partial => 'flowsheet_panel_section', :locals => {:id => k, :title => section['title'], :tests => section['test_results'], :range_info => section['range_info'], :text => section['text'], :columns => section['tests'], :help => section['help']}

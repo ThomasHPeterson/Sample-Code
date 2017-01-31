@@ -1,0 +1,18 @@
+%h1= get_header(@header)
+- if @patients.present?
+	.span-24.last
+		= page_entries_info @patients
+		(Displaying #{select_tag :per_page, options_for_select([5,10,30,50], @per_page.to_i), :onchange => "if(this.value){window.location='?per_page='+this.value;}"} results per page)
+	.span-11
+		= will_paginate @patients, :params => params[:search] unless @patients.nil?
+	.last.right
+		= render :partial => "nav"
+	= render :partial => "list"
+- else
+	.span-13.last.right
+		= render :partial => "nav"
+	%table
+		%tr
+			%td No patients found
+.span-11.last
+	= will_paginate @patients unless @patients.nil?
